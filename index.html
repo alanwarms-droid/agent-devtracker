@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
 <title>Alliance Agent Fleet — Build Tracker</title>
 <style>
   :root{
@@ -38,21 +36,32 @@
   body{margin:0}
   .wrap{background:var(--ground);color:var(--ink);font-family:var(--sans);min-height:100vh;padding:0 18px 60px}
   .inner{max-width:1080px;margin:0 auto}
-  header{padding:34px 0 18px}
+  header{padding:30px 0 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .htext{min-width:0}
   .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
   h1{font-size:27px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px}
   .sub{color:var(--muted);font-size:14px;margin:0;max-width:74ch;line-height:1.5}
+  /* auth bar */
+  #authbar{display:flex;align-items:center;gap:10px;flex:none}
+  .who{font-size:12px;color:var(--muted);text-align:right;line-height:1.3}
+  .who b{color:var(--ink)}
+  .who .badge{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:20px;margin-top:3px}
+  .who .badge.edit{background:var(--st-prod-bg);color:var(--st-prod)}
+  .who .badge.view{background:var(--st-backlog-bg);color:var(--muted)}
+  button.auth{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:9px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow);white-space:nowrap}
+  button.auth:hover{border-color:var(--accent);color:var(--accent)}
+  button.auth.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-  .summary{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 6px;align-items:center}
+  .summary{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 6px;align-items:center}
   .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 13px;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px}
   .metric b{font-size:18px;font-variant-numeric:tabular-nums}
   .metric span{font-size:12px;color:var(--muted)}
   .bar{flex:1;min-width:180px;height:12px;border-radius:7px;background:var(--st-backlog-bg);overflow:hidden;display:flex;border:1px solid var(--line)}
   .bar i{display:block;height:100%}
-  .toolbar{display:flex;gap:8px;margin-left:auto}
-  button.tb{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer;box-shadow:var(--shadow)}
-  button.tb:hover{border-color:var(--accent);color:var(--accent)}
-  button.tb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .live{margin-left:auto;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .live .dot{width:8px;height:8px;border-radius:50%;background:var(--st-prod);box-shadow:0 0 0 0 var(--st-prod);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(30,122,70,.4)}70%{box-shadow:0 0 0 6px rgba(30,122,70,0)}100%{box-shadow:0 0 0 0 rgba(30,122,70,0)}}
+  @media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
 
   .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:14px 0 6px;font-size:12px;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -83,19 +92,25 @@
   input.note{flex:1;font:inherit;font-size:12.5px;border:1px dashed var(--line);background:transparent;color:var(--ink);border-radius:7px;padding:6px 9px}
   input.note:focus{outline:none;border-color:var(--accent);border-style:solid}
   input.note::placeholder{color:var(--faint)}
+  .notestatic{grid-column:1 / -1;font-size:12.5px;color:var(--muted);margin-top:2px;padding-left:2px}
+  .notestatic b{font-family:var(--mono);font-size:10.5px;color:var(--faint);text-transform:uppercase;margin-right:6px}
 
   .foot{margin-top:30px;border-top:1px solid var(--line);padding-top:14px;color:var(--faint);font-size:11.5px;line-height:1.5;max-width:82ch}
   .foot b{color:var(--muted)}
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:var(--shadow)}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:var(--shadow);max-width:90vw;text-align:center}
   .toast.on{opacity:1}
-  @media (max-width:640px){.card{grid-template-columns:1fr}.cright{justify-self:start}}
+  @media (max-width:640px){.card{grid-template-columns:1fr}.cright{justify-self:start}header{flex-direction:column}}
 </style>
-
+</head>
+<body>
 <div class="wrap"><div class="inner">
   <header>
-    <p class="eyebrow">Alliance Advisors · Revenue Engine</p>
-    <h1>Agent Fleet — Build Tracker</h1>
-    <p class="sub">Each agent is a small program that watches a public signal (an SEC filing or market-data event) and turns it into a qualified opportunity. This board tracks each one from backlog to production. Press <b>Go</b> to start development, set status, and leave a note.</p>
+    <div class="htext">
+      <p class="eyebrow">Alliance Advisors · Revenue Engine</p>
+      <h1>Agent Fleet — Build Tracker</h1>
+      <p class="sub">Each agent is a small program that watches a public signal (an SEC filing or market-data event) and turns it into a qualified opportunity. This board tracks each one from backlog to production — updating live for everyone.</p>
+    </div>
+    <div id="authbar"></div>
   </header>
 
   <div class="summary" id="summary"></div>
@@ -103,153 +118,192 @@
   <div id="board"></div>
 
   <p class="foot">
-    <b>How this stays in sync:</b> your changes save in <b>this browser</b>. The shared link shows the canonical baseline; to update what everyone sees, click <b>Copy status</b> and send it to Alan/Claude to redeploy (~30 seconds). <br>
+    <b>Live &amp; shared:</b> the board reads from a live database, so it updates for everyone in real time. <b>Only Alan can change status</b> (signed in as the editor); everyone else sees a read-only view. <br>
     <b>Statuses:</b> Backlog (to do) → In development (started) → Waiting · Claude Code (parked, awaiting a next step) → Testing → Prototyped (working proof-of-concept) → Production (deployed &amp; running on Alliance's stack).
   </p>
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script>
-(function(){
-  "use strict";
-  var STORE="aa_agent_tracker_v2";
-  var STATUS=[
-    {k:"backlog", l:"Backlog"},
-    {k:"dev",     l:"In development"},
-    {k:"wait",    l:"Waiting · Claude Code"},
-    {k:"test",    l:"Testing"},
-    {k:"proto",   l:"Prototyped"},
-    {k:"prod",    l:"Production"}
-  ];
-  var GROUPS=[
-    {t:"Shared production layer", note:"The common machinery every agent plugs into. Build this once and all the agents below reuse it — so new agents are a config change, not a new system.", a:[
-      {id:"core",   n:"Core skeleton", d:"The reusable engine every agent runs on: it polls a signal, removes duplicates, asks Claude to read and qualify it, scores it, and hands off the result. Every agent below is this skeleton wired to a different signal.", sig:"poll · qualify · score", cad:"—", s:"backlog"},
-      {id:"sfsink", n:"Salesforce sink", d:"The connector that writes each qualified lead into Salesforce — the right object and fields, routed to the right owner, with a link back to the source filing so a rep can verify it.", sig:"Salesforce API", cad:"—", s:"backlog"},
-      {id:"dedupe", n:"Dedupe store", d:"A memory of what's already been seen and what's already in Salesforce, so the same company is never surfaced or pitched twice.", sig:"vs. seen + SFDC", cad:"—", s:"backlog"},
-      {id:"macro",  n:"Macro / cycle feed", d:"A standing weekly pull of the market indicators (small-cap index, M&A volume, activist 13D volume) that show where each opportunity pool is heading. Feeds the TAM/SAM and Forecast agents.", sig:"Russell 2000 · M&A · 13D", cad:"weekly", s:"backlog"}
-    ]},
-    {t:"Corporate lead agents", note:"Daily watchers on corporate-issuer filings. Each finds a specific event type and turns it into a scored solicitation lead.", a:[
-      {id:"defic",  n:"Deficiency / Reverse-split", d:"Finds companies sliding toward a sub-$1 delisting — before the deficiency notice even files — plus the ones that just filed. Each is a likely reverse-split solicitation. (Already prototyped: 167 live pre-notice leads.)", sig:"8-K 3.01 + pre-$1 screen", cad:"daily", s:"proto"},
-      {id:"annual", n:"Annual-Meeting Renewal", d:"Reads the meeting calendar from prior-year proxies to flag every company's upcoming annual meeting — our clients to renew, and competitor-held meetings to go win.", sig:"meeting calendar (DEF 14A)", cad:"daily", s:"dev"},
-      {id:"mavote", n:"M&A-Vote", d:"Catches merger proxies as they file — every deal vote is a solicitation opportunity.", sig:"DEFM14A", cad:"daily", s:"backlog"},
-      {id:"activ",  n:"Activism", d:"Watches for activist stakes (Schedule 13D) and the contested proxies that follow — the campaigns where solicitation matters most.", sig:"13D → DEFC14A", cad:"daily", s:"backlog"},
-      {id:"consent",n:"Consent (14C)", d:"Finds shareholder actions taken by written consent / information statement — a real event type that EDGAR shows but we don't track yet.", sig:"DEF / PRE 14C", cad:"daily", s:"backlog"},
-      {id:"tender", n:"Tender / Exchange", d:"Catches tender and exchange offers — deal events that need an information agent.", sig:"SC TO · SC 14D-9", cad:"daily", s:"backlog"},
-      {id:"spac",   n:"SPAC", d:"Flags SPAC extension and de-SPAC votes — high-frequency solicitation work, and where the Continental Stock Transfer partnership feeds.", sig:"SPAC 8-K · DEFA14A", cad:"daily", s:"backlog"}
-    ]},
-    {t:"Investment-company lead agents", note:"The fund, ETF, REIT and BDC side. EDGAR undercounts here (Broadridge was company of record), so these pair public filings with Alliance's own records.", a:[
-      {id:"whale",  n:"Fund-Whale / Adviser-Change", d:"Watches asset-manager M&A that triggers complex-wide fund votes 6–12 months later — the large 'whale' mandates. (KraneShares was one; prototyped as the whale radar.)", sig:"adviser M&A → N-14", cad:"daily", s:"proto"},
-      {id:"etf",    n:"ETF Radar", d:"Tracks new ETF launches, mutual-fund→ETF conversions, and adviser deals — the current hot-spot. Lets us reach a sponsor while they're launching, long before any mandate.", sig:"N-1A · MF→ETF · adviser M&A", cad:"daily", s:"backlog", pri:"priority"},
-      {id:"fundmtg",n:"Fund-Meeting", d:"The fund equivalent of the annual-meeting agent — board elections, 15(c) renewals, and routine fund shareholder votes.", sig:"fund proxy calendar · N-CEN", cad:"daily", s:"backlog"},
-      {id:"reorg",  n:"Reorg / Reclass", d:"Fund mergers, reorganizations, and share-class changes that need a shareholder vote.", sig:"N-14 · share-class", cad:"daily", s:"backlog"}
-    ]},
-    {t:"Run-rate agents", note:"Investor Intelligence and Investor Relations aren't triggered by an event — they're contracted books. So their 'agent' is a periodic screen that finds prospects, not a daily event listener.", a:[
-      {id:"ii",     n:"Investor Intelligence — Universe Screen", d:"Screens the whole public-company universe for names that fit our ownership-intelligence product and aren't clients yet — a standing prospect list for BD.", sig:"listings · volume · ownership", cad:"quarterly", s:"backlog"},
-      {id:"ir",     n:"Investor Relations — New-Listing", d:"Watches new public registrations — a newly public company is exactly the moment it needs IR. Reach them at the S-1/424B, ahead of competitors.", sig:"S-1 · 424B · N-1A", cad:"daily", s:"backlog"}
-    ]},
-    {t:"Last-mile agents", note:"Two coverage gaps that public filings alone won't fully surface.", a:[
-      {id:"logi",   n:"Logistics-Attach", d:"Rides along every meeting the other agents already find and flags the paired proxy-logistics opportunity (printing, mailing, tabulation). Same signal — no separate hunt.", sig:"rides the meeting agents", cad:"daily", s:"backlog"},
-      {id:"intl",   n:"International-Signal", d:"A second data spine beyond EDGAR — non-US regulator and exchange feeds — for international mandates that never touch SEC filings.", sig:"non-US regulator feeds", cad:"daily", s:"backlog"}
-    ]},
-    {t:"Cross-segment agents", note:"Two agents that run across all segments on slower clocks — they produce the market size and the forecast, not leads.", a:[
-      {id:"tamsam", n:"TAM / SAM Agent", d:"The market-sizing agent: every quarter it recomputes each opportunity pool × the average revenue per event to refresh the total addressable market by segment.", sig:"pools × $/event", cad:"quarterly", s:"dev"},
-      {id:"fcst",   n:"Forecast Agent", d:"Fuses current pipeline performance with the cycle-adjusted pools to project where we land this year (monthly) and next year's budget (quarterly). This is the June/H2 forecast work, made permanent.", sig:"pipeline + cycle-adjusted", cad:"monthly + quarterly", s:"proto"}
-    ]}
-  ];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  var overrides={};
-  try{overrides=JSON.parse(localStorage.getItem(STORE)||"{}")||{};}catch(e){overrides={};}
-  function save(){try{localStorage.setItem(STORE,JSON.stringify(overrides));}catch(e){}}
-  function stOf(a){return (overrides[a.id]&&overrides[a.id].s)||a.s;}
-  function noteOf(a){return (overrides[a.id]&&overrides[a.id].note)!=null?overrides[a.id].note:(a.note||"");}
-  function setOv(id,key,val){if(!overrides[id])overrides[id]={};overrides[id][key]=val;save();}
+const firebaseConfig = {
+  apiKey: "AIzaSyADISHuwKGWHhj23mPAD8zm1QW7g367vpU",
+  authDomain: "alliance-agent-devtracker.firebaseapp.com",
+  projectId: "alliance-agent-devtracker",
+  storageBucket: "alliance-agent-devtracker.firebasestorage.app",
+  messagingSenderId: "908503270959",
+  appId: "1:908503270959:web:72f7b4f4dbbec23c35e8da"
+};
+const EDITOR_EMAIL = "alanwarms@gmail.com";   // only this Google account can edit
 
-  function chip(k){
-    var m=STATUS.find(function(s){return s.k===k;})||STATUS[0];
-    var c=document.createElement("span");c.className="chip";
-    c.style.background="var(--st-"+k+"-bg)";c.style.color="var(--st-"+k+")";
-    c.textContent=m.l;return c;
-  }
-  function render(){
-    var board=document.getElementById("board");board.innerHTML="";
-    GROUPS.forEach(function(g){
-      var gd=document.createElement("div");gd.className="group";
-      var h=document.createElement("h2");h.textContent=g.t;gd.appendChild(h);
-      if(g.note){var gn=document.createElement("p");gn.className="gnote";gn.textContent=g.note;gd.appendChild(gn);}
-      g.a.forEach(function(a){
-        var st=stOf(a);
-        var card=document.createElement("div");card.className="card"+(a.pri&&st==="backlog"?" pri":"");
-        var main=document.createElement("div");main.className="cmain";
-        var nm=document.createElement("div");nm.className="cname";nm.textContent=a.n;
-        if(a.pri){var p=document.createElement("span");p.className="pill";p.textContent=a.pri;nm.appendChild(p);}
-        main.appendChild(nm);
-        if(a.d){var de=document.createElement("div");de.className="cdesc";de.textContent=a.d;main.appendChild(de);}
-        var meta=document.createElement("div");meta.className="cmeta";
-        meta.innerHTML='<span>signal: <code>'+a.sig+'</code></span><span>runs: '+a.cad+'</span>';
-        main.appendChild(meta);
-        var right=document.createElement("div");right.className="cright";
-        right.appendChild(chip(st));
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const stateRef = doc(db, "tracker", "state");
+
+const STATUS=[
+  {k:"backlog", l:"Backlog"},
+  {k:"dev",     l:"In development"},
+  {k:"wait",    l:"Waiting · Claude Code"},
+  {k:"test",    l:"Testing"},
+  {k:"proto",   l:"Prototyped"},
+  {k:"prod",    l:"Production"}
+];
+const GROUPS=[
+  {t:"Shared production layer", note:"The common machinery every agent plugs into. Build this once and all the agents below reuse it — so new agents are a config change, not a new system.", a:[
+    {id:"core",   n:"Core skeleton", d:"The reusable engine every agent runs on: it polls a signal, removes duplicates, asks Claude to read and qualify it, scores it, and hands off the result. Every agent below is this skeleton wired to a different signal.", sig:"poll · qualify · score", cad:"—", s:"backlog"},
+    {id:"sfsink", n:"Salesforce sink", d:"The connector that writes each qualified lead into Salesforce — the right object and fields, routed to the right owner, with a link back to the source filing so a rep can verify it.", sig:"Salesforce API", cad:"—", s:"backlog"},
+    {id:"dedupe", n:"Dedupe store", d:"A memory of what's already been seen and what's already in Salesforce, so the same company is never surfaced or pitched twice.", sig:"vs. seen + SFDC", cad:"—", s:"backlog"},
+    {id:"approve",n:"Review & Approval gate", d:"The human-in-the-loop step every lead passes through before it becomes actionable. A qualified lead lands in a review queue with its evidence — the source filing, the score, the reasoning — and a person approves, rejects, or edits it. Approved → promoted to a real Salesforce lead and assigned; rejected → logged as feedback that sharpens the agent. High-value or low-confidence items always require sign-off; routine high-confidence ones can be set to auto-flow.", sig:"review queue → approve/reject", cad:"continuous", s:"backlog"},
+    {id:"macro",  n:"Macro / cycle feed", d:"A standing weekly pull of the market indicators (small-cap index, M&A volume, activist 13D volume) that show where each opportunity pool is heading. Feeds the TAM/SAM and Forecast agents.", sig:"Russell 2000 · M&A · 13D", cad:"weekly", s:"backlog"}
+  ]},
+  {t:"Corporate lead agents", note:"Daily watchers on corporate-issuer filings. Each finds a specific event type and turns it into a scored solicitation lead.", a:[
+    {id:"defic",  n:"Deficiency / Reverse-split", d:"Finds companies sliding toward a sub-$1 delisting — before the deficiency notice even files — plus the ones that just filed. Each is a likely reverse-split solicitation. (Already prototyped: 167 live pre-notice leads.)", sig:"8-K 3.01 + pre-$1 screen", cad:"daily", s:"proto"},
+    {id:"annual", n:"Annual-Meeting Renewal", d:"Reads the meeting calendar from prior-year proxies to flag every company's upcoming annual meeting — our clients to renew, and competitor-held meetings to go win.", sig:"meeting calendar (DEF 14A)", cad:"daily", s:"dev"},
+    {id:"mavote", n:"M&A-Vote", d:"Catches merger proxies as they file — every deal vote is a solicitation opportunity.", sig:"DEFM14A", cad:"daily", s:"backlog"},
+    {id:"activ",  n:"Activism", d:"Watches for activist stakes (Schedule 13D) and the contested proxies that follow — the campaigns where solicitation matters most.", sig:"13D → DEFC14A", cad:"daily", s:"backlog"},
+    {id:"consent",n:"Consent (14C)", d:"Finds shareholder actions taken by written consent / information statement — a real event type that EDGAR shows but we don't track yet.", sig:"DEF / PRE 14C", cad:"daily", s:"backlog"},
+    {id:"tender", n:"Tender / Exchange", d:"Catches tender and exchange offers — deal events that need an information agent.", sig:"SC TO · SC 14D-9", cad:"daily", s:"backlog"},
+    {id:"spac",   n:"SPAC", d:"Flags SPAC extension and de-SPAC votes — high-frequency solicitation work, and where the Continental Stock Transfer partnership feeds.", sig:"SPAC 8-K · DEFA14A", cad:"daily", s:"backlog"}
+  ]},
+  {t:"Investment-company lead agents", note:"The fund, ETF, REIT and BDC side. EDGAR undercounts here (Broadridge was company of record), so these pair public filings with Alliance's own records.", a:[
+    {id:"whale",  n:"Fund-Whale / Adviser-Change", d:"Watches asset-manager M&A that triggers complex-wide fund votes 6–12 months later — the large 'whale' mandates. (KraneShares was one; prototyped as the whale radar.)", sig:"adviser M&A → N-14", cad:"daily", s:"proto"},
+    {id:"etf",    n:"ETF Radar", d:"Tracks new ETF launches, mutual-fund→ETF conversions, and adviser deals — the current hot-spot. Lets us reach a sponsor while they're launching, long before any mandate.", sig:"N-1A · MF→ETF · adviser M&A", cad:"daily", s:"backlog", pri:"priority"},
+    {id:"fundmtg",n:"Fund-Meeting", d:"The fund equivalent of the annual-meeting agent — board elections, 15(c) renewals, and routine fund shareholder votes.", sig:"fund proxy calendar · N-CEN", cad:"daily", s:"backlog"},
+    {id:"reorg",  n:"Reorg / Reclass", d:"Fund mergers, reorganizations, and share-class changes that need a shareholder vote.", sig:"N-14 · share-class", cad:"daily", s:"backlog"}
+  ]},
+  {t:"Run-rate agents", note:"Investor Intelligence and Investor Relations aren't triggered by an event — they're contracted books. So their 'agent' is a periodic screen that finds prospects, not a daily event listener.", a:[
+    {id:"ii",     n:"Investor Intelligence — Universe Screen", d:"Screens the whole public-company universe for names that fit our ownership-intelligence product and aren't clients yet — a standing prospect list for BD.", sig:"listings · volume · ownership", cad:"quarterly", s:"backlog"},
+    {id:"ir",     n:"Investor Relations — New-Listing", d:"Watches new public registrations — a newly public company is exactly the moment it needs IR. Reach them at the S-1/424B, ahead of competitors.", sig:"S-1 · 424B · N-1A", cad:"daily", s:"backlog"}
+  ]},
+  {t:"Last-mile agents", note:"Two coverage gaps that public filings alone won't fully surface.", a:[
+    {id:"logi",   n:"Logistics-Attach", d:"Rides along every meeting the other agents already find and flags the paired proxy-logistics opportunity (printing, mailing, tabulation). Same signal — no separate hunt.", sig:"rides the meeting agents", cad:"daily", s:"backlog"},
+    {id:"intl",   n:"International-Signal", d:"A second data spine beyond EDGAR — non-US regulator and exchange feeds — for international mandates that never touch SEC filings.", sig:"non-US regulator feeds", cad:"daily", s:"backlog"}
+  ]},
+  {t:"Cross-segment agents", note:"Two agents that run across all segments on slower clocks — they produce the market size and the forecast, not leads.", a:[
+    {id:"tamsam", n:"TAM / SAM Agent", d:"The market-sizing agent: every quarter it recomputes each opportunity pool × the average revenue per event to refresh the total addressable market by segment.", sig:"pools × $/event", cad:"quarterly", s:"dev"},
+    {id:"fcst",   n:"Forecast Agent", d:"Fuses current pipeline performance with the cycle-adjusted pools to project where we land this year (monthly) and next year's budget (quarterly). This is the June/H2 forecast work, made permanent.", sig:"pipeline + cycle-adjusted", cad:"monthly + quarterly", s:"proto"}
+  ]}
+];
+
+let overrides={}, canEdit=false, currentUser=null;
+
+const stOf=a=>(overrides[a.id]&&overrides[a.id].s)||a.s;
+const noteOf=a=>(overrides[a.id]&&overrides[a.id].note!=null)?overrides[a.id].note:(a.note||"");
+
+async function writeAgent(id,patch){
+  if(!canEdit){toast("Only the editor (signed in) can change status");return;}
+  try{ await setDoc(stateRef,{overrides:{[id]:Object.assign({},overrides[id]||{},patch)}},{merge:true}); }
+  catch(e){ toast("Save failed: "+(e.code||e.message)); }
+}
+
+function chip(k){
+  const m=STATUS.find(s=>s.k===k)||STATUS[0];
+  const c=document.createElement("span");c.className="chip";
+  c.style.background="var(--st-"+k+"-bg)";c.style.color="var(--st-"+k+")";
+  c.textContent=m.l;return c;
+}
+function render(){
+  const board=document.getElementById("board");board.innerHTML="";
+  GROUPS.forEach(g=>{
+    const gd=document.createElement("div");gd.className="group";
+    const h=document.createElement("h2");h.textContent=g.t;gd.appendChild(h);
+    if(g.note){const gn=document.createElement("p");gn.className="gnote";gn.textContent=g.note;gd.appendChild(gn);}
+    g.a.forEach(a=>{
+      const st=stOf(a);
+      const card=document.createElement("div");card.className="card"+(a.pri&&st==="backlog"?" pri":"");
+      const main=document.createElement("div");main.className="cmain";
+      const nm=document.createElement("div");nm.className="cname";nm.textContent=a.n;
+      if(a.pri){const p=document.createElement("span");p.className="pill";p.textContent=a.pri;nm.appendChild(p);}
+      main.appendChild(nm);
+      if(a.d){const de=document.createElement("div");de.className="cdesc";de.textContent=a.d;main.appendChild(de);}
+      const meta=document.createElement("div");meta.className="cmeta";
+      meta.innerHTML='<span>signal: <code>'+a.sig+'</code></span><span>runs: '+a.cad+'</span>';
+      main.appendChild(meta);
+      const right=document.createElement("div");right.className="cright";
+      right.appendChild(chip(st));
+      if(canEdit){
         if(st==="backlog"){
-          var go=document.createElement("button");go.className="go";go.textContent="Go ▶";
-          go.onclick=function(){setOv(a.id,"s","dev");render();toast(a.n+" → In development");};
+          const go=document.createElement("button");go.className="go";go.textContent="Go ▶";
+          go.onclick=()=>{writeAgent(a.id,{s:"dev"});toast(a.n+" → In development");};
           right.appendChild(go);
         }else{
-          var sel=document.createElement("select");sel.className="st";
-          STATUS.forEach(function(s){var o=document.createElement("option");o.value=s.k;o.textContent=s.l;if(s.k===st)o.selected=true;sel.appendChild(o);});
-          sel.onchange=function(){setOv(a.id,"s",sel.value);render();};
+          const sel=document.createElement("select");sel.className="st";
+          STATUS.forEach(s=>{const o=document.createElement("option");o.value=s.k;o.textContent=s.l;if(s.k===st)o.selected=true;sel.appendChild(o);});
+          sel.onchange=()=>writeAgent(a.id,{s:sel.value});
           right.appendChild(sel);
         }
-        card.appendChild(main);card.appendChild(right);
-        var nr=document.createElement("div");nr.className="noterow";
-        var lab=document.createElement("label");lab.textContent="note";
-        var inp=document.createElement("input");inp.className="note";inp.type="text";
-        inp.placeholder="e.g. waiting for next step inside Claude Code";
-        inp.value=noteOf(a);
-        inp.oninput=function(){setOv(a.id,"note",inp.value);};
+      }
+      card.appendChild(main);card.appendChild(right);
+      const nt=noteOf(a);
+      if(canEdit){
+        const nr=document.createElement("div");nr.className="noterow";
+        const lab=document.createElement("label");lab.textContent="note";
+        const inp=document.createElement("input");inp.className="note";inp.type="text";
+        inp.placeholder="e.g. waiting for next step inside Claude Code";inp.value=nt;
+        inp.onchange=()=>writeAgent(a.id,{note:inp.value});
         nr.appendChild(lab);nr.appendChild(inp);card.appendChild(nr);
-        gd.appendChild(card);
-      });
-      board.appendChild(gd);
+      }else if(nt){
+        const ns=document.createElement("div");ns.className="notestatic";
+        ns.innerHTML='<b>note</b>';ns.appendChild(document.createTextNode(nt));card.appendChild(ns);
+      }
+      gd.appendChild(card);
     });
-    renderSummary();
+    board.appendChild(gd);
+  });
+  renderSummary();
+}
+function renderSummary(){
+  const counts={};STATUS.forEach(s=>counts[s.k]=0);
+  let total=0;GROUPS.forEach(g=>g.a.forEach(a=>{counts[stOf(a)]++;total++;}));
+  const sm=document.getElementById("summary");
+  let bar="";STATUS.forEach(s=>{const w=total?counts[s.k]/total*100:0;if(w>0)bar+='<i style="width:'+w+'%;background:var(--st-'+s.k+')"></i>';});
+  sm.innerHTML=
+    '<div class="metric"><b>'+total+'</b><span>agents</span></div>'+
+    '<div class="metric"><b style="color:var(--st-dev)">'+(counts.dev+counts.wait+counts.test+counts.proto)+'</b><span>in flight</span></div>'+
+    '<div class="metric"><b style="color:var(--st-proto)">'+counts.proto+'</b><span>prototyped</span></div>'+
+    '<div class="metric"><b style="color:var(--st-prod)">'+counts.prod+'</b><span>production</span></div>'+
+    '<div class="bar">'+bar+'</div>'+
+    '<div class="live"><span class="dot"></span>live</div>';
+}
+function renderAuth(){
+  const el=document.getElementById("authbar");el.innerHTML="";
+  if(!currentUser){
+    const b=document.createElement("button");b.className="auth primary";b.textContent="Sign in to edit";
+    b.onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(e){toast("Sign-in: "+(e.code||e.message));}};
+    el.appendChild(b);
+    return;
   }
-  function renderSummary(){
-    var counts={};STATUS.forEach(function(s){counts[s.k]=0;});
-    var total=0;GROUPS.forEach(function(g){g.a.forEach(function(a){counts[stOf(a)]++;total++;});});
-    var done=counts.prod, active=counts.dev+counts.wait+counts.test+counts.proto;
-    var sm=document.getElementById("summary");
-    var bar='';STATUS.forEach(function(s){var w=total?counts[s.k]/total*100:0;if(w>0)bar+='<i style="width:'+w+'%;background:var(--st-'+s.k+')"></i>';});
-    sm.innerHTML=
-      '<div class="metric"><b>'+total+'</b><span>agents</span></div>'+
-      '<div class="metric"><b style="color:var(--st-dev)">'+active+'</b><span>in flight</span></div>'+
-      '<div class="metric"><b style="color:var(--st-proto)">'+counts.proto+'</b><span>prototyped</span></div>'+
-      '<div class="metric"><b style="color:var(--st-prod)">'+done+'</b><span>production</span></div>'+
-      '<div class="bar">'+bar+'</div>'+
-      '<div class="toolbar">'+
-        '<button class="tb" id="copyBtn">Copy status</button>'+
-        '<button class="tb" id="resetBtn">Reset mine</button>'+
-      '</div>';
-    document.getElementById("copyBtn").onclick=copyStatus;
-    document.getElementById("resetBtn").onclick=function(){if(confirm("Clear your local changes and return to the shared baseline?")){overrides={};save();render();toast("Reset to baseline");}};
-  }
-  function copyStatus(){
-    var lines=["ALLIANCE AGENT FLEET — STATUS ("+new Date().toISOString().slice(0,10)+")",""];
-    GROUPS.forEach(function(g){lines.push("# "+g.t);
-      g.a.forEach(function(a){var st=STATUS.find(function(s){return s.k===stOf(a);}).l;var nt=noteOf(a);lines.push("- "+a.n+"  ["+st+"]"+(nt?"  — "+nt:""));});
-      lines.push("");});
-    var text=lines.join("\n");
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast("Status copied — paste to Alan/Claude to update the shared version");},function(){fallbackCopy(text);});}
-    else fallbackCopy(text);
-  }
-  function fallbackCopy(text){var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Status copied");}catch(e){toast("Copy failed");}document.body.removeChild(ta);}
-  var toastT;
-  function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on");},2600);}
+  const who=document.createElement("div");who.className="who";
+  who.innerHTML='<div><b>'+(currentUser.email||"signed in")+'</b></div>'+
+    '<div class="badge '+(canEdit?"edit":"view")+'">'+(canEdit?"editor · can change status":"view only")+'</div>';
+  el.appendChild(who);
+  const b=document.createElement("button");b.className="auth";b.textContent="Sign out";
+  b.onclick=()=>signOut(auth);el.appendChild(b);
+}
 
-  var lg=document.getElementById("legend");
-  STATUS.forEach(function(s){var el=document.createElement("span");el.innerHTML='<span class="sw" style="background:var(--st-'+s.k+')"></span>'+s.l;lg.appendChild(el);});
+let toastT;
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2800);}
 
-  render();
-})();
+// legend
+const lg=document.getElementById("legend");
+STATUS.forEach(s=>{const el=document.createElement("span");el.innerHTML='<span class="sw" style="background:var(--st-'+s.k+')"></span>'+s.l;lg.appendChild(el);});
+
+// live data
+onSnapshot(stateRef,snap=>{const d=snap.exists()?snap.data():{};overrides=(d&&d.overrides)||{};render();},
+  err=>{toast("Read error: "+(err.code||err.message));});
+
+// auth state
+onAuthStateChanged(auth,user=>{
+  currentUser=user;
+  canEdit=!!(user&&user.email&&user.email.toLowerCase()===EDITOR_EMAIL.toLowerCase());
+  renderAuth();render();
+});
+
+render();renderAuth();
 </script>
 </body>
 </html>
