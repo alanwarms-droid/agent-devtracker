@@ -177,17 +177,17 @@ const GROUPS=[
     {id:"fundmtg",n:"Fund-Meeting", d:"The fund equivalent of the annual-meeting agent — board elections, 15(c) renewals, and routine fund shareholder votes.", sig:"fund proxy calendar · N-CEN", cad:"daily", s:"backlog"},
     {id:"reorg",  n:"Reorg / Reclass", d:"Fund mergers, reorganizations, and share-class changes that need a shareholder vote.", sig:"N-14 · share-class", cad:"daily", s:"backlog"}
   ]},
-  {t:"Run-rate agents", note:"Investor Intelligence and Investor Relations aren't triggered by an event — they're contracted books. So their 'agent' is a periodic screen that finds prospects, not a daily event listener.", a:[
-    {id:"ii",     n:"Investor Intelligence — Universe Screen", d:"Screens the whole public-company universe for names that fit our ownership-intelligence product and aren't clients yet — a standing prospect list for BD.", sig:"listings · volume · ownership", cad:"quarterly", s:"backlog"},
+  {t:"Run-rate agents", note:"Investor Relations isn't a compliance event — but a new public listing is exactly when a company needs IR, so this agent watches registrations.", a:[
     {id:"ir",     n:"Investor Relations — New-Listing", d:"Watches new public registrations — a newly public company is exactly the moment it needs IR. Reach them at the S-1/424B, ahead of competitors.", sig:"S-1 · 424B · N-1A", cad:"daily", s:"backlog"}
   ]},
-  {t:"Last-mile agents", note:"Two coverage gaps that public filings alone won't fully surface.", a:[
-    {id:"logi",   n:"Logistics-Attach", d:"Rides along every meeting the other agents already find and flags the paired proxy-logistics opportunity (printing, mailing, tabulation). Same signal — no separate hunt.", sig:"rides the meeting agents", cad:"daily", s:"backlog"},
-    {id:"intl",   n:"International-Signal", d:"A second data spine beyond EDGAR — non-US regulator and exchange feeds — for international mandates that never touch SEC filings.", sig:"non-US regulator feeds", cad:"daily", s:"backlog"}
+  {t:"Last-mile agents", note:"A coverage gap filings surface only indirectly — logistics rides the meetings the other agents already find.", a:[
+    {id:"logi",   n:"Logistics-Attach", d:"Rides along every meeting the other agents already find and flags the paired proxy-logistics opportunity (printing, mailing, tabulation). Same signal — no separate hunt.", sig:"rides the meeting agents", cad:"daily", s:"backlog"}
   ]},
-  {t:"Cross-segment agents", note:"Two agents that run across all segments on slower clocks — they produce the market size and the forecast, not leads.", a:[
+  {t:"Market sizing & forecast", note:"These run across all segments on slower clocks — they size the market and forecast; they don't generate leads. Investor Intelligence and International live here too: both are sizing inputs, not event-driven lead agents — there's no filing signal that triggers a timed lead for either.", a:[
     {id:"tamsam", n:"TAM / SAM Agent", d:"The market-sizing agent: every quarter it recomputes each opportunity pool × the average revenue per event to refresh the total addressable market by segment.", sig:"pools × $/event", cad:"quarterly", s:"dev"},
-    {id:"fcst",   n:"Forecast Agent", d:"Fuses current pipeline performance with the cycle-adjusted pools to project where we land this year (monthly) and next year's budget (quarterly). This is the June/H2 forecast work, made permanent.", sig:"pipeline + cycle-adjusted", cad:"monthly + quarterly", s:"proto"}
+    {id:"fcst",   n:"Forecast Agent", d:"Fuses current pipeline performance with the cycle-adjusted pools to project where we land this year (monthly) and next year's budget (quarterly). This is the June/H2 forecast work, made permanent.", sig:"pipeline + cycle-adjusted", cad:"monthly + quarterly", s:"proto"},
+    {id:"ii",     n:"Investor Intelligence — Market Sizing", d:"Sizes the ownership-analytics (Investor Intelligence) opportunity across the public universe — a subscription/TAM input, not an event-driven lead. Nothing a company files says it suddenly needs ownership intelligence, so this is sizing, not timed lead-gen.", sig:"universe × subscription $", cad:"quarterly", s:"dev"},
+    {id:"intl",   n:"International — Market Sizing", d:"Sizes the non-US mandate pool that never touches SEC filings — a TAM input needing non-US regulator/exchange data. Sizing, not lead-gen: with no EDGAR signal there's no timed lead to generate.", sig:"non-US pool (TAM)", cad:"quarterly", s:"backlog"}
   ]}
 ];
 
